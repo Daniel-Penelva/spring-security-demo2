@@ -1,5 +1,6 @@
 package com.apirest.springsecuritydemo2.controllers;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +18,16 @@ public class UsuarioController {
 
     private UsuarioService usuarioService;
 
+    // http://localhost:8080/login  (login: user)
     // http://localhost:8080/usuarios
     @PostMapping
     private UsuarioDto salvar(@RequestBody UsuarioDto usuarioDto) {
 
         return usuarioService.salvar(usuarioDto);
+    }
+
+    @GetMapping
+    private String getOk(){
+        return "Conta acessada!";
     }
 }
