@@ -8,6 +8,8 @@ public interface AutenticacaoService extends UserDetailsService{
 
     public String obterToken(AuthDto authDto);
 
+    public String validaTokeJwt(String token);
+
 }
 
 /* 

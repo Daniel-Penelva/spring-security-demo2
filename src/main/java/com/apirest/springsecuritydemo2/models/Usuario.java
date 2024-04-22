@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.apirest.springsecuritydemo2.enums.Role;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,15 +31,24 @@ public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(nullable = false)  // está anotação define que o campo não pode ser nula
     private String nome;
+
+    @Column(nullable = false)
     private String login;
+
+    @Column(nullable = false)
     private String senha;
+
+    @Column(nullable = false)
     private Role role;
 
-    public Usuario(String nome, String login, String senha) {
+    public Usuario(String nome, String login, String senha, Role role) {
         this.nome = nome;
         this.login = login;
         this.senha = senha;
+        this.role = role;
     }
 
     // Implementando interface UserDetails do Spring Security

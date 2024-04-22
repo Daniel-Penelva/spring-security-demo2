@@ -12,10 +12,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import lombok.AllArgsConstructor;
 
 @Configuration        // Indica que a classe é uma classe de configuração Spring, permitindo a definição de beans e configurações para a aplicação.
 @EnableWebSecurity    // Habilita a segurança web no aplicativo Spring, permitindo a configuração de políticas de segurança para a aplicação.
+@AllArgsConstructor
 public class SecurityConfiguration {
+
+    private SecurityFilter securityFilter;
 
     /*Configura a segurança web no aplicativo Spring*/
     @Bean  
@@ -33,6 +39,7 @@ public class SecurityConfiguration {
                                 .permitAll()                                                                     // Define que qualquer usuário, autenticado ou não, será autorizado a acessar a rota "/auth" com método POST.
                             .anyRequest()                                                                        // Define que as políticas de autorização serão aplicadas a qualquer outra solicitação HTTP.
                             .authenticated())                                                                    // Define que apenas usuários autenticados serão autorizados a acessar qualquer outra rota além de "/usuários" com método GET.
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();                                                                                        // Finaliza a configuração do objeto httpSecurity e retorna a instância de SecurityFilterChain configurada de acordo com as políticas definidas
     }
 

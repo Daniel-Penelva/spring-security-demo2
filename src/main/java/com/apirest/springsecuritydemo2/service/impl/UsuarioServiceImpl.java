@@ -27,9 +27,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         
         var passwordHash = passwordEncoder.encode(usuarioDto.senha());
-        Usuario usuario = new Usuario(usuarioDto.nome(), usuarioDto.login(), passwordHash);
+        Usuario usuario = new Usuario(usuarioDto.nome(), usuarioDto.login(), passwordHash, usuarioDto.role());
         Usuario novoUsuario = usuarioRepository.save(usuario);
-        return new UsuarioDto(novoUsuario.getNome(), novoUsuario.getLogin(), novoUsuario.getSenha());
+        return new UsuarioDto(novoUsuario.getNome(), novoUsuario.getLogin(), novoUsuario.getSenha(), novoUsuario.getRole());
     }
 
 }

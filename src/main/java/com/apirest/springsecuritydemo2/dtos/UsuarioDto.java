@@ -1,4 +1,6 @@
 package com.apirest.springsecuritydemo2.dtos;
 
-public record UsuarioDto(String nome, String login, String senha) {
+import com.apirest.springsecuritydemo2.enums.Role;
+
+public record UsuarioDto(String nome, String login, String senha, Role role) {
 }
