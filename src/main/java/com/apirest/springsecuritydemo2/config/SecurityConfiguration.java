@@ -3,6 +3,8 @@ package com.apirest.springsecuritydemo2.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -27,6 +29,8 @@ public class SecurityConfiguration {
                                 .hasRole("ADMIN")                                                                // Define que apenas usuários com a função "ADMIN" serão autorizados a acessar a rota "/usuarios" com método GET.
                             .requestMatchers(HttpMethod.POST, "/usuarios")                                       // Define que as políticas de autorização serão aplicadas a solicitações HTTP POST para a rota "/usuários".
                                 .permitAll()                                                                     // Define que qualquer usuário, autenticado ou não, será autorizado a acessar a rota "/usuários" com método POST.
+                            .requestMatchers(HttpMethod.POST, "/auth")                                           // Define que as políticas de autorização serão aplicadas a solicitações HTTP POST para a rota "/auth".
+                                .permitAll()                                                                     // Define que qualquer usuário, autenticado ou não, será autorizado a acessar a rota "/auth" com método POST.
                             .anyRequest()                                                                        // Define que as políticas de autorização serão aplicadas a qualquer outra solicitação HTTP.
                             .authenticated())                                                                    // Define que apenas usuários autenticados serão autorizados a acessar qualquer outra rota além de "/usuários" com método GET.
                 .build();                                                                                        // Finaliza a configuração do objeto httpSecurity e retorna a instância de SecurityFilterChain configurada de acordo com as políticas definidas
@@ -39,6 +43,18 @@ public class SecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+
+    /*A classe AuthenticationConfiguration é uma interface do Spring Security usada para configurar o AuthenticationManager. Ela fornece um 
+    método getAuthenticationManager() que retorna a instância do AuthenticationManager configurada pelo Spring Security. O método authenticationManager 
+    delega para o método getAuthenticationManager() da instância AuthenticationConfiguration para obter a instância do AuthenticationManager. Essa 
+    instância do AuthenticationManager é então retornada como um bean gerenciado pelo contêiner Spring. Logo, o AuthenticationManager é um 
+    componente chave do framework Spring Security, responsável por autenticar usuários e retornar um objeto Authentication representando o 
+    usuário autenticado.*/
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 }
