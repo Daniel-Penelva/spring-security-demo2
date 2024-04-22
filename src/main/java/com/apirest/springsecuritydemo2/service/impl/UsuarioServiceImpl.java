@@ -1,5 +1,6 @@
 package com.apirest.springsecuritydemo2.service.impl;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.apirest.springsecuritydemo2.dtos.UsuarioDto;
@@ -15,6 +16,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private UsuarioRepository usuarioRepository;
 
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public UsuarioDto salvar(UsuarioDto usuarioDto) {
         
@@ -23,7 +26,8 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new RuntimeException("Usuário já existe!");
         }
         
-        Usuario usuario = new Usuario(usuarioDto.nome(), usuarioDto.login(), usuarioDto.senha());
+        var passwordHash = passwordEncoder.encode(usuarioDto.senha());
+        Usuario usuario = new Usuario(usuarioDto.nome(), usuarioDto.login(), passwordHash);
         Usuario novoUsuario = usuarioRepository.save(usuario);
         return new UsuarioDto(novoUsuario.getNome(), novoUsuario.getLogin(), novoUsuario.getSenha());
     }

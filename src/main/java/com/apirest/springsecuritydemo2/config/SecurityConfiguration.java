@@ -7,12 +7,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration        // Indica que a classe é uma classe de configuração Spring, permitindo a definição de beans e configurações para a aplicação.
 @EnableWebSecurity    // Habilita a segurança web no aplicativo Spring, permitindo a configuração de políticas de segurança para a aplicação.
 public class SecurityConfiguration {
 
+    /*Configura a segurança web no aplicativo Spring*/
     @Bean  
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity                                                                                      // Representa a configuração de segurança para as requisições HTTP.
@@ -27,6 +30,15 @@ public class SecurityConfiguration {
                             .anyRequest()                                                                        // Define que as políticas de autorização serão aplicadas a qualquer outra solicitação HTTP.
                             .authenticated())                                                                    // Define que apenas usuários autenticados serão autorizados a acessar qualquer outra rota além de "/usuários" com método GET.
                 .build();                                                                                        // Finaliza a configuração do objeto httpSecurity e retorna a instância de SecurityFilterChain configurada de acordo com as políticas definidas
+    }
+
+
+    /*Método responsável para codificar e verificar senhas. Retorna um BCryptPasswordEncoder para codificação de senhas usando o algoritmo 
+    BCrypt, que é um algoritmo de hash de senha resistente a ataques de força bruta. Quando um usuário é cadastrado no aplicativo, a senha 
+    fornecida pelo usuário é codificada usando o PasswordEncoder e armazenada no banco de dados.*/
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
 }
