@@ -2,8 +2,10 @@ package com.apirest.springsecuritydemo2.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -14,8 +16,16 @@ public class SecurityConfiguration {
     @Bean  
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity                                                                                      // Representa a configuração de segurança para as requisições HTTP.
-                .csrf(csrf -> csrf.disable())                                                                    // Desabilita a proteção CSRF (Cross-Site Request Forgery) para evitar ataques CSRF, o que pode ser apropriado em certos cenários, como APIs REST stateless.
+                .csrf(AbstractHttpConfigurer::disable)                                                           // Desabilita a proteção CSRF (Cross-Site Request Forgery) para evitar ataques CSRF. A classe AbstractHttpConfigurer fornece métodos úteis para configurar as políticas de segurança, como disable() para desabilitar a proteção CSRF.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))    // Define a política de gerenciamento de sessão como STATELESS, indicando que a aplicação não deve criar ou usar sessões HTTP, tornando-a stateless.
+                .authorizeHttpRequests(authorize ->                                                              // Inicia a configuração de autorização para as solicitações HTTP, passando um lambda para o método authorizeHttpRequests.
+                        authorize                                                                                // Representa a instância de HttpSecurity que será configurada para autorização.
+                            .requestMatchers(HttpMethod.GET, "/usuarios")                                        // Define que as políticas de autorização serão aplicadas a solicitações GET na rota "/usuarios".
+                                .hasRole("ADMIN")                                                                // Define que apenas usuários com a função "ADMIN" serão autorizados a acessar a rota "/usuarios" com método GET.
+                            .requestMatchers(HttpMethod.POST, "/usuarios")                                       // Define que as políticas de autorização serão aplicadas a solicitações HTTP POST para a rota "/usuários".
+                                .permitAll()                                                                     // Define que qualquer usuário, autenticado ou não, será autorizado a acessar a rota "/usuários" com método POST.
+                            .anyRequest()                                                                        // Define que as políticas de autorização serão aplicadas a qualquer outra solicitação HTTP.
+                            .authenticated())                                                                    // Define que apenas usuários autenticados serão autorizados a acessar qualquer outra rota além de "/usuários" com método GET.
                 .build();                                                                                        // Finaliza a configuração do objeto httpSecurity e retorna a instância de SecurityFilterChain configurada de acordo com as políticas definidas
     }
 
