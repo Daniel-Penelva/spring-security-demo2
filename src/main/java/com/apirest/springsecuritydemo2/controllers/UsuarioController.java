@@ -26,8 +26,22 @@ public class UsuarioController {
         return usuarioService.salvar(usuarioDto);
     }
 
+    
     @GetMapping
     private String getOk(){
         return "Conta acessada!";
+    }
+
+    // http://localhost:8080/usuarios/admin
+    @GetMapping("/admin")
+    private String getAdmin(){
+        return "Conta acessada - Permissão de Administrador!";
+    }
+
+
+    // http://localhost:8080/usuarios/user
+    @GetMapping("/user")
+    private String getUser(){
+        return "Conta acessada - Permissão de Usuário!";
     }
 }
