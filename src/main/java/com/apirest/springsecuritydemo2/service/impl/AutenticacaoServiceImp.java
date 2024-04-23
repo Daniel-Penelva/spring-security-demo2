@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,15 @@ import lombok.AllArgsConstructor;
 public class AutenticacaoServiceImp implements AutenticacaoService {
 
     private UsuarioRepository usuarioRepository;
+
+    @Value("${auth.jwt.token.secret}")
+    private String secretKey;
+
+    @Value("${auth.jwt.token.expiration}")
+    private Integer horaExpiracaoToken;
+
+    @Value("${auth.jwt.refresh-token.expiration}")
+    private Integer horaExpiracaoRefreshToken;
 
     /* O método loadUserByUsername(String username) é responsável por carregar o objeto UserDetails para um determinado nome de usuário de um
      * repositório de usuários, como um banco de dados, diretório LDAP ou estrutura de dados em memória. O método recebe um parâmetro String
@@ -46,7 +56,7 @@ public class AutenticacaoServiceImp implements AutenticacaoService {
     public String gerarTokenJwt(Usuario usuario) {
 
         try {
-            Algorithm algorithm = Algorithm.HMAC256("my-secret");                // Cria uma instância do Algorithm usando o algoritmo HMAC256 e uma chave secreta ("my-secret"). 
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);                         // Cria uma instância do Algorithm usando o algoritmo HMAC256 e uma chave secreta "secretKey".
 
             return JWT.create()                                                         // Cria um novo objeto JWT usando o método JWT.create().
                     .withIssuer("spring-security-demo2")                         // Define o emissor do token, no caso, especifica que o token é emitido pelo meu projeto "spring-security-demo2".
@@ -65,7 +75,7 @@ public class AutenticacaoServiceImp implements AutenticacaoService {
 
         try {
             
-            Algorithm algorithm = Algorithm.HMAC256("my-secret");        // Cria uma instância do Algorithm usando o algoritmo HMAC256 e uma chave secreta ("my-secret"). 
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);                 // Cria uma instância do Algorithm usando o algoritmo HMAC256 e uma chave secreta "secretKey".
             return JWT.require(algorithm)                                       // Inicia a verificação do token com o algoritmo especificado.
                     .withIssuer("spring-security-demo2")                 // Define o emissor do token, no caso, especifica que o token é emitido pelo meu projeto "spring-security-demo2".
                     .build()                                                    // Constrói o objeto de verificação do token com as configurações especificadas.
@@ -79,7 +89,7 @@ public class AutenticacaoServiceImp implements AutenticacaoService {
 
     // Este método gera a data de expiração do token
     private Instant geraDataExpiracao() {
-        return LocalDateTime.now().plusHours(8).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusHours(horaExpiracaoToken).toInstant(ZoneOffset.of("-03:00"));
     }
 
 }
