@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.apirest.springsecuritydemo2.dtos.AuthDto;
+import com.apirest.springsecuritydemo2.dtos.TokenResponseDto;
 import com.apirest.springsecuritydemo2.service.AutenticacaoService;
 
 import lombok.AllArgsConstructor;
@@ -35,7 +36,7 @@ public class AutenticacaoController {
     // http://localhost:8080/auth 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public String auth(@RequestBody AuthDto authDto){
+    public TokenResponseDto auth(@RequestBody AuthDto authDto){
         var usuarioAuthenticationToken = new UsernamePasswordAuthenticationToken(authDto.login(), authDto.senha());  // Representar a autenticação de um usuário baseado em nome de usuário e senha. Vai ser buscado no UsuarioRepository, onde valida a senha e devolve o token.
         authenticationManager.authenticate(usuarioAuthenticationToken);
 

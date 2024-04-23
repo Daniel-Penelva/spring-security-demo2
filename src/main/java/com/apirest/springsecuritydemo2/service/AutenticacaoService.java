@@ -3,10 +3,11 @@ package com.apirest.springsecuritydemo2.service;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.apirest.springsecuritydemo2.dtos.AuthDto;
+import com.apirest.springsecuritydemo2.dtos.TokenResponseDto;
 
 public interface AutenticacaoService extends UserDetailsService{
 
-    public String obterToken(AuthDto authDto);
+    public TokenResponseDto obterToken(AuthDto authDto);
 
     public String validaTokeJwt(String token);
 

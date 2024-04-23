@@ -4,12 +4,14 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.apirest.springsecuritydemo2.dtos.AuthDto;
+import com.apirest.springsecuritydemo2.dtos.TokenResponseDto;
 import com.apirest.springsecuritydemo2.models.Usuario;
 import com.apirest.springsecuritydemo2.repositories.UsuarioRepository;
 import com.apirest.springsecuritydemo2.service.AutenticacaoService;
@@ -18,12 +20,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
-import lombok.AllArgsConstructor;
-
 @Service
-@AllArgsConstructor
 public class AutenticacaoServiceImp implements AutenticacaoService {
 
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Value("${auth.jwt.token.secret}")
@@ -44,11 +44,13 @@ public class AutenticacaoServiceImp implements AutenticacaoService {
     }
 
 
-    /*Este método obterToken é responsável por obetr um token JWT (JSON Web Token) para um objeto Usuario*/
+    /*Este método obterToken é responsável por obter um token JWT (JSON Web Token) e um refresh token para um objeto Usuario*/
     @Override
-    public String obterToken(AuthDto authDto) {
+    public TokenResponseDto obterToken(AuthDto authDto) {
         Usuario usuario = usuarioRepository.findByLogin(authDto.login());
-        return gerarTokenJwt(usuario);
+        return TokenResponseDto.builder()
+                    .token(gerarTokenJwt(usuario))
+                    .build();
     }
 
 
