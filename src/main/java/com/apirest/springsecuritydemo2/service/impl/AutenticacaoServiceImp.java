@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.apirest.springsecuritydemo2.dtos.AuthDto;
 import com.apirest.springsecuritydemo2.dtos.TokenResponseDto;
+import com.apirest.springsecuritydemo2.infra.exceptions.UnauthorizedException;
 import com.apirest.springsecuritydemo2.models.Usuario;
 import com.apirest.springsecuritydemo2.repositories.UsuarioRepository;
 import com.apirest.springsecuritydemo2.service.AutenticacaoService;
@@ -108,7 +109,7 @@ public class AutenticacaoServiceImp implements AutenticacaoService {
         Usuario usuario = usuarioRepository.findByLogin(login);                                                           // É feita uma busca no repositório de usuários para encontrar o usuário com o login extraído do token de atualização.
 
         if(login == null){                                                                                                // Verifica se o login extraído do token é nulo e lança uma exceção caso seja, indicando uma falha na geração do token de atualização.
-            throw new RuntimeException("Falhou ao gerar refresh token!");
+            throw new UnauthorizedException("Falhou ao gerar refresh token!");
         }
 
         var autentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());  // Cria uma instância de UsernamePasswordAuthenticationToken com o usuário encontrado no passo anterior, sem senha (null) e com as autorizações do usuário.  
