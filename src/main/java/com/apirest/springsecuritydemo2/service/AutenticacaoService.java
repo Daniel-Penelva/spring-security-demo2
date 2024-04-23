@@ -10,6 +10,8 @@ public interface AutenticacaoService extends UserDetailsService{
     public TokenResponseDto obterToken(AuthDto authDto);
 
     public String validaTokeJwt(String token);
+    
+    public TokenResponseDto obterRefreshToken(String refreshToken);
 
 }
 

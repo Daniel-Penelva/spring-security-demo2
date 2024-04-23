@@ -6,6 +6,8 @@ import java.time.ZoneOffset;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -93,6 +95,29 @@ public class AutenticacaoServiceImp implements AutenticacaoService {
     // Este método gera a data de expiração do token
     private Instant geraDataExpiracao(Integer expiration) {
         return LocalDateTime.now().plusHours(expiration).toInstant(ZoneOffset.of("-03:00"));
+    }
+
+
+    /* Essa método é responsável por obter um novo token JWT e um novo token de atualização com base em um token de atualização fornecido, 
+    validando-o, recuperando o usuário associado a ele e gerando novos tokens com base nas informações do usuário e nas configurações de 
+    expiração dos tokens.*/
+    @Override
+    public TokenResponseDto obterRefreshToken(String refreshToken){
+        
+        String login = validaTokeJwt(refreshToken);                                                                       // Aqui, o método validaTokeJwt(refreshToken) é chamado para validar o token de atualização e extrair o login associado a ele.                                       
+        Usuario usuario = usuarioRepository.findByLogin(login);                                                           // É feita uma busca no repositório de usuários para encontrar o usuário com o login extraído do token de atualização.
+
+        if(login == null){                                                                                                // Verifica se o login extraído do token é nulo e lança uma exceção caso seja, indicando uma falha na geração do token de atualização.
+            throw new RuntimeException("Falhou ao gerar refresh token!");
+        }
+
+        var autentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());  // Cria uma instância de UsernamePasswordAuthenticationToken com o usuário encontrado no passo anterior, sem senha (null) e com as autorizações do usuário.  
+        SecurityContextHolder.getContext().setAuthentication(autentication);                                               // Define a autenticação do usuário no contexto de segurança do Spring Security, permitindo que o usuário seja autenticado para as próximas operações.
+        
+        return TokenResponseDto.builder()                                                                                   // Cria e retorna um objeto TokenResponseDto, onde são definidos o token JWT gerado com a hora de expiração do token e o token de atualização também gerado com a hora de expiração do token de atualização.
+                    .token(gerarTokenJwt(usuario, horaExpiracaoToken))
+                    .refreshToken(gerarTokenJwt(usuario, horaExpiracaoRefreshToken))
+                    .build();
     }
 
 }

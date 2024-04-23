@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.apirest.springsecuritydemo2.dtos.AuthDto;
+import com.apirest.springsecuritydemo2.dtos.RequestRefreshDto;
 import com.apirest.springsecuritydemo2.dtos.TokenResponseDto;
 import com.apirest.springsecuritydemo2.service.AutenticacaoService;
 
@@ -41,6 +42,15 @@ public class AutenticacaoController {
         authenticationManager.authenticate(usuarioAuthenticationToken);
 
         return autenticacaoService.obterToken(authDto);
+    }
+
+
+    // http://localhost:8080/auth/refresh-token
+    @PostMapping("/refresh-token")
+    @ResponseStatus(HttpStatus.OK)
+    public TokenResponseDto authRefreshToken(@RequestBody RequestRefreshDto requestRefreshDto){
+
+        return autenticacaoService.obterRefreshToken(requestRefreshDto.refreshToken());
     }
     
 }
