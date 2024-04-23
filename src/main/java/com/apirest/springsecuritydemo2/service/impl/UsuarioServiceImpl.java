@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.apirest.springsecuritydemo2.dtos.UsuarioDto;
+import com.apirest.springsecuritydemo2.infra.exceptions.BusinessException;
 import com.apirest.springsecuritydemo2.models.Usuario;
 import com.apirest.springsecuritydemo2.repositories.UsuarioRepository;
 import com.apirest.springsecuritydemo2.service.UsuarioService;
@@ -23,7 +24,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         
         Usuario usuarioExiste = usuarioRepository.findByLogin(usuarioDto.login());
         if (usuarioExiste != null) { // verifica para não deixar cadastrar o mesmo usuário com o mesmo login.
-            throw new RuntimeException("Usuário já existe!");
+            throw new BusinessException("Usuário já existe!");
         }
         
         var passwordHash = passwordEncoder.encode(usuarioDto.senha());
