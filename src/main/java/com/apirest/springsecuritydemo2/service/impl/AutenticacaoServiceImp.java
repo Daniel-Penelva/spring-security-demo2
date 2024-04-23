@@ -49,13 +49,14 @@ public class AutenticacaoServiceImp implements AutenticacaoService {
     public TokenResponseDto obterToken(AuthDto authDto) {
         Usuario usuario = usuarioRepository.findByLogin(authDto.login());
         return TokenResponseDto.builder()
-                    .token(gerarTokenJwt(usuario))
+                    .token(gerarTokenJwt(usuario, horaExpiracaoToken))
+                    .refreshToken(gerarTokenJwt(usuario, horaExpiracaoRefreshToken))
                     .build();
     }
 
 
     /*Este método gerarTokenJwt é responsável por gerar um token JWT (JSON Web Token) para um objeto Usuario*/
-    public String gerarTokenJwt(Usuario usuario) {
+    public String gerarTokenJwt(Usuario usuario, Integer expiration) {
 
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);                         // Cria uma instância do Algorithm usando o algoritmo HMAC256 e uma chave secreta "secretKey".
@@ -63,7 +64,7 @@ public class AutenticacaoServiceImp implements AutenticacaoService {
             return JWT.create()                                                         // Cria um novo objeto JWT usando o método JWT.create().
                     .withIssuer("spring-security-demo2")                         // Define o emissor do token, no caso, especifica que o token é emitido pelo meu projeto "spring-security-demo2".
                     .withSubject(usuario.getLogin())                                    // Define o assunto do token como o login do objeto Usuario.
-                    .withExpiresAt(geraDataExpiracao())                                 // Define a data de expiração do token como o valor retornado pelo método geraDataExpiracao().
+                    .withExpiresAt(geraDataExpiracao(expiration))                                 // Define a data de expiração do token como o valor retornado pelo método geraDataExpiracao().
                     .sign(algorithm);                                                   // Assina o token usando o objeto algorithm criado anteriormente.
 
         } catch (JWTCreationException exception) {
@@ -90,8 +91,8 @@ public class AutenticacaoServiceImp implements AutenticacaoService {
     }
 
     // Este método gera a data de expiração do token
-    private Instant geraDataExpiracao() {
-        return LocalDateTime.now().plusHours(horaExpiracaoToken).toInstant(ZoneOffset.of("-03:00"));
+    private Instant geraDataExpiracao(Integer expiration) {
+        return LocalDateTime.now().plusHours(expiration).toInstant(ZoneOffset.of("-03:00"));
     }
 
 }
